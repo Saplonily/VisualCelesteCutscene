@@ -1,0 +1,13 @@
+﻿<Application x:Class="VisualCelesteCutscene.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:VisualCelesteCutscene"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             ShutdownMode="OnLastWindowClose">
+  <Application.Resources>
+    <ResourceDictionary>
+      <local:IsTypeConverter TargetType="{x:Type local:DialogPlotPageViewModel}" x:Key="cvtIsPlotPage"/>
+      <BooleanToVisibilityConverter x:Key="cvtBoolToVisibility"/>
+    </ResourceDictionary>
+  </Application.Resources>
+</Application>

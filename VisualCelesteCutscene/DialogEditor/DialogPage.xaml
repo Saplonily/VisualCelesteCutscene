@@ -1,0 +1,163 @@
+﻿<UserControl x:Class="VisualCelesteCutscene.DialogPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:VisualCelesteCutscene"
+             d:DataContext="{d:DesignInstance Type=local:DialogPlotPageViewModel, IsDesignTimeCreatable=True}" d:Background="White"
+             mc:Ignorable="d" d:DesignWidth="1115" Height="100">
+  <DockPanel Margin="4">
+    <Grid DockPanel.Dock="Right">
+      <Grid.Resources>
+        <Style TargetType="Button">
+          <Setter Property="Margin" Value="1"/>
+          <Setter Property="Padding" Value="4 0"/>
+        </Style>
+      </Grid.Resources>
+      <Grid.RowDefinitions>
+        <RowDefinition/>
+        <RowDefinition/>
+      </Grid.RowDefinitions>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition/>
+        <ColumnDefinition/>
+      </Grid.ColumnDefinitions>
+      <Button Content="⬆️" Grid.Row="0" Grid.Column="0" 
+              CommandParameter="{Binding .}"
+              Command="{Binding DataContext.MoveUpPageCommand, RelativeSource={RelativeSource AncestorType=local:DialogEditor}}" />
+
+      <Button Content="⬇️" Grid.Row="1" Grid.Column="0" 
+              CommandParameter="{Binding .}"
+              Command="{Binding DataContext.MoveDownPageCommand, RelativeSource={RelativeSource AncestorType=local:DialogEditor}}" />
+
+      <Button Content="🔍" Grid.Row="0" Grid.Column="1"
+              CommandParameter="{Binding .}"
+              Command="{Binding DataContext.PreviewPageCommand, RelativeSource={RelativeSource AncestorType=local:DialogEditor}}"/>
+
+      <Button Content="🗑️" Grid.Row="1" Grid.Column="1" 
+              CommandParameter="{Binding .}"
+              Command="{Binding DataContext.DeletePageCommand, RelativeSource={RelativeSource AncestorType=local:DialogEditor}}" />
+
+      <!-- InlinedToPrevious indicator -->
+      <Line Grid.Column="1" Margin="0 -32 -3 0"
+            X1="0" X2="0" Y1="0" Y2="48"
+            HorizontalAlignment="Right" VerticalAlignment="Top"
+            Stroke="Gray" StrokeThickness="2"
+            StrokeDashArray="4 2"
+            >
+        <Line.Style>
+          <Style TargetType="Line">
+            <Setter Property="Visibility" Value="Collapsed"/>
+            <Style.Triggers>
+              <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                  <Condition Binding="{Binding ., Converter={StaticResource cvtIsPlotPage}}" Value="True"/>
+                  <Condition Binding="{Binding InlinedToPrevious}" Value="True"/>
+                </MultiDataTrigger.Conditions>
+                <Setter Property="Visibility" Value="Visible"/>
+              </MultiDataTrigger>
+            </Style.Triggers>
+          </Style>
+        </Line.Style>
+      </Line>
+    </Grid>
+
+    <ContentPresenter Content="{Binding}" d:Content="{d:DesignInstance Type={x:Type local:DialogPlotPageViewModel}, IsDesignTimeCreatable=True}">
+      <ContentPresenter.Resources>
+        <DataTemplate DataType="{x:Type local:DialogPlotPageViewModel}">
+          <DockPanel>
+            <Image Source="{Binding PortraitImage}" Margin="8 0" d:Source="/Assets/madelineph.png">
+              <Image.Style>
+                <Style TargetType="Image">
+                  <Setter Property="DockPanel.Dock" Value="Left"/>
+                  <Style.Triggers>
+                    <DataTrigger Binding="{Binding AtRight}" Value="True">
+                      <Setter Property="DockPanel.Dock" Value="Right"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding FlipResult}" Value="True">
+                      <Setter Property="RenderTransform">
+                        <Setter.Value>
+                          <ScaleTransform ScaleX="-1"/>
+                        </Setter.Value>
+                      </Setter>
+                    </DataTrigger>
+                    <Trigger Property="Source" Value="{x:Null}">
+                      <Setter Property="Visibility" Value="Collapsed" />
+                    </Trigger>
+                  </Style.Triggers>
+                </Style>
+              </Image.Style>
+              <Image.RenderTransformOrigin>
+                <Point X="0.5" Y="0.5"/>
+              </Image.RenderTransformOrigin>
+            </Image>
+            <local:DialogTextBox FontSize="20" Text="{Binding DialogText, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True"
+                                 VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                                 d:Text="Hi I'm Madeline&#xA;This is the second line&#xA;And this is the third"
+                                 MaxLines="3" LostFocus="TextBox_LostFocus" PreviewKeyDown="TextBox_PreviewKeyDown"
+                                 BindableSelectionStart="{Binding SelectionStart}"
+                                 BindableSelectionLength="{Binding SelectionLength}">
+              <local:DialogTextBox.ContextMenu>
+                <ContextMenu>
+                  <MenuItem Header="环绕波浪(_W) {~}{/~}"
+                            CommandParameter="{x:Static local:SurroundingType.Wavy}" 
+                            Command="{Binding SurroundNoParamCommand}"/>
+                  <MenuItem Header="环绕颜色(_C) {#BADFF4}{#} ..."
+                            Command="{Binding SurroundColorCommand}"/>
+                  <MenuItem Header="环绕冲击(_I) {!}{/!}"
+                            CommandParameter="{x:Static local:SurroundingType.Impact}" 
+                            Command="{Binding SurroundNoParamCommand}"/>
+                  <MenuItem Header="环绕变速(_S) {>> 2}{>>}"
+                            CommandParameter="{x:Static local:SurroundingType.ChangeSpeed}"
+                            Command="{Binding SurroundWithNumCommand}"/>
+                  <MenuItem Header="环绕变大(_B) {big}{/big}"
+                            CommandParameter="{x:Static local:SurroundingType.Bigger}" 
+                            Command="{Binding SurroundNoParamCommand}"/>
+                  <MenuItem Header="环绕凌乱(_M) {%}{/%}"
+                            CommandParameter="{x:Static local:SurroundingType.Messy}" 
+                            Command="{Binding SurroundNoParamCommand}"/>
+                  <Separator/>
+                  <MenuItem Header="取消环绕波浪 {~}{/~}"
+                            CommandParameter="{x:Static local:SurroundingType.Wavy}"
+                            Command="{Binding CancelSurroundCommand}"/>
+                  <MenuItem Header="取消环绕颜色 {#BADFF4}{#}"
+                            CommandParameter="{x:Static local:SurroundingType.Color}"
+                            Command="{Binding CancelSurroundCommand}"/>
+                  <MenuItem Header="取消环绕冲击 {!}{/!}"
+                            CommandParameter="{x:Static local:SurroundingType.Impact}"
+                            Command="{Binding CancelSurroundCommand}"/>
+                  <MenuItem Header="取消环绕变速 {>> 2}{>>}"
+                            CommandParameter="{x:Static local:SurroundingType.ChangeSpeed}"
+                            Command="{Binding CancelSurroundCommand}"/>
+                  <MenuItem Header="取消环绕变大 {big}{/big}"
+                            CommandParameter="{x:Static local:SurroundingType.Bigger}"
+                            Command="{Binding CancelSurroundCommand}"/>
+                  <MenuItem Header="取消环绕凌乱 {%}{/%}"
+                            CommandParameter="{x:Static local:SurroundingType.Messy}"
+                            Command="{Binding CancelSurroundCommand}"/>
+                  <Separator/>
+                  <MenuItem Header="插入引用(_R) {+MADELINE}"
+                            CommandParameter="{x:Static local:InsertType.Reference}"
+                            Command="{Binding InsertCommand}"
+                            ToolTip="还没实现别点了(x"/>
+                  <MenuItem Header="插入停顿(_P) {0.5}"
+                            CommandParameter="{x:Static local:InsertType.Pause}"
+                            Command="{Binding InsertCommand}"
+                            ToolTip="还没实现别点了(x"/>
+                </ContextMenu>
+              </local:DialogTextBox.ContextMenu>
+            </local:DialogTextBox>
+          </DockPanel>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type local:DialogTriggerPageViewModel}">
+          <Border BorderBrush="#ABADB3" BorderThickness="1" SnapsToDevicePixels="True">
+            <DockPanel>
+              <TextBlock Text="{Binding TriggerName}" Margin="4" FontSize="16" HorizontalAlignment="Center" DockPanel.Dock="Top"/>
+              <TextBox Text="{Binding ArgString}" Margin="8" Padding="8"/>
+            </DockPanel>
+          </Border>
+        </DataTemplate>
+      </ContentPresenter.Resources>
+    </ContentPresenter>
+  </DockPanel>
+</UserControl>

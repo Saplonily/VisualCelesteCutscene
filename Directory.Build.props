@@ -1,0 +1,12 @@
+<Project>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseArtifactsOutput>true</UseArtifactsOutput>
+    <LangVersion>preview</LangVersion>
+    <ProjectRoot>$(MSBuildThisFileDirectory)</ProjectRoot>
+    <PathMap>$(ProjectRoot)=~/</PathMap>
+    <RollForward>LatestMajor</RollForward>
+  </PropertyGroup>
+
+</Project>

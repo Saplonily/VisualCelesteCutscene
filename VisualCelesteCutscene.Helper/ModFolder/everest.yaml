@@ -1,0 +1,6 @@
+- Name: VisualCelesteCutscene.Helper
+  Version: 0.0.1-alpha
+  DLL: Code/VisualCelesteCutscene.Helper.dll
+  Dependencies:
+    - Name: EverestCore
+      Version: 1.5577.0

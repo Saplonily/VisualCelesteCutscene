@@ -1,0 +1,12 @@
+﻿<UserControl x:Class="Saladim.Blockly.BlocklyBlock"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Saladim.Blockly"
+             mc:Ignorable="d" d:Background="White" Cursor="Hand"
+             d:DesignHeight="48" d:DesignWidth="128">
+    <Border CornerRadius="16" Background="LightCoral" MinWidth="128" MinHeight="48">
+        <TextBlock Padding="16" Text="我是积木" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    </Border>
+</UserControl>

@@ -1,0 +1,13 @@
+{
+  "dependentFileProviders": {
+    "add": {
+      "fileSuffixToExtension": {
+        "add": {
+          ".ViewModel.cs": [ ".xaml" ],
+          ".ViewModel.*.cs": [ ".xaml" ],
+          ".xaml.cs": [ ".xaml" ]
+        }
+      }
+    }
+  }
+}

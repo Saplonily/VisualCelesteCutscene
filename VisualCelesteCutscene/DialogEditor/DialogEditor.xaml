@@ -1,0 +1,383 @@
+﻿<Window x:Class="VisualCelesteCutscene.DialogEditor"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:VisualCelesteCutscene"
+        xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+        mc:Ignorable="d" WindowStartupLocation="CenterScreen"
+        d:DataContext="{d:DesignInstance Type={x:Type local:DialogEditorViewModel}, IsDesignTimeCreatable=False}"
+        SnapsToDevicePixels="True"
+        Height="900" Width="1600" MinWidth="750" MinHeight="300">
+  <Window.InputBindings>
+    <KeyBinding Key="S" Modifiers="Ctrl" Command="{Binding SaveAllCommand}"/>
+    <KeyBinding Key="F4" Modifiers="Ctrl" Command="{Binding CloseCommand}"/>
+  </Window.InputBindings>
+  <Window.Style>
+    <Style TargetType="Window">
+      <Setter Property="Title" Value="Celeste Dialog File Editor" />
+      <Style.Triggers>
+        <DataTrigger Binding="{Binding EntriesDirty}" Value="True">
+          <DataTrigger.Setters>
+            <Setter Property="Title" Value="Celeste Dialog File Editor *" />
+          </DataTrigger.Setters>
+        </DataTrigger>
+      </Style.Triggers>
+    </Style>
+  </Window.Style>
+  <Window.Resources>
+    <!--#region Control Styles-->
+    <!-- Menu Item -->
+    <Style TargetType="MenuItem" x:Key="TopMenuItem">
+      <Setter Property="FontSize" Value="14"/>
+      <Setter Property="Padding" Value="16 4"/>
+    </Style>
+    <Style TargetType="MenuItem" x:Key="InnerMenuItem">
+      <Setter Property="FontSize" Value="12"/>
+      <Setter Property="Padding" Value="0 4"/>
+      <Setter Property="IsEnabled" Value="True"/>
+      <Style.Triggers>
+        <MultiTrigger>
+          <MultiTrigger.Conditions>
+            <Condition Property="Command" Value="{x:Null}"/>
+            <Condition Property="Role" Value="SubmenuItem"/>
+          </MultiTrigger.Conditions>
+          <MultiTrigger.Setters>
+            <Setter Property="IsEnabled" Value="False"/>
+          </MultiTrigger.Setters>
+        </MultiTrigger>
+      </Style.Triggers>
+    </Style>
+    <!-- Header Info -->
+    <Style TargetType="Border" x:Key="HeaderInfoBorder">
+      <Setter Property="Margin" Value="8 0"/>
+      <Setter Property="BorderThickness" Value="2"/>
+      <Setter Property="BorderBrush">
+        <Setter.Value>
+          <SolidColorBrush Color="Black"/>
+        </Setter.Value>
+      </Setter>
+      <Setter Property="Padding" Value="16 0"/>
+      <Setter Property="CornerRadius" Value="4"/>
+    </Style>
+    <Style TargetType="TextBlock" x:Key="HeaderInfoTextBlock">
+      <Setter Property="FontSize" Value="16"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+    <!-- ComboBox-->
+    <Style TargetType="ComboBox">
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="Margin" Value="8"/>
+      <Setter Property="SelectedIndex" Value="0"/>
+    </Style>
+    <Style TargetType="TextBlock" x:Key="CharacterTextBlock">
+      <Setter Property="FontSize" Value="20"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="Margin" Value="8"/>
+    </Style>
+    <Style TargetType="CheckBox" x:Key="CharacterCheckBox">
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="VerticalContentAlignment" Value="Bottom"/>
+      <Setter Property="Margin" Value="8"/>
+      <Setter Property="LayoutTransform">
+        <Setter.Value>
+          <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <!-- Action Button -->
+    <Style TargetType="Button" x:Key="ActionButton" BasedOn="{StaticResource {x:Type Button}}">
+      <Setter Property="Margin" Value="8"/>
+      <Setter Property="Padding" Value="16 0"/>
+      <Setter Property="DockPanel.Dock" Value="Right" />
+    </Style>
+    <!--#endregion-->
+  </Window.Resources>
+  <Grid d:ShowGridLines="True">
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="0.4*" MaxWidth="512" MinWidth="64"/>
+      <ColumnDefinition Width="1*"/>
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="36"/>
+      <RowDefinition Height="48"/>
+      <RowDefinition/>
+      <RowDefinition Height="36"/>
+    </Grid.RowDefinitions>
+    <!-- head menu -->
+    <Menu Background="Transparent" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+      <MenuItem Header="文件(_F)" Style="{StaticResource TopMenuItem}">
+        <MenuItem Header="新建语言(_N)..." Style="{StaticResource InnerMenuItem}"/>
+        <MenuItem Header="打开 Mod(_O)..." Style="{StaticResource InnerMenuItem}"/>
+        <MenuItem Header="保存(_S)" Style="{StaticResource InnerMenuItem}"
+                  Command="{Binding SaveAllCommand}"
+                  InputGestureText="Ctrl+S"/>
+        <Separator/>
+        <MenuItem Header="关闭(_C)" Style="{StaticResource InnerMenuItem}"
+                  Command="{Binding CloseCommand}"
+                  InputGestureText="Ctrl+F4"/>
+        <Separator/>
+        <MenuItem Header="退出(_X)" Style="{StaticResource InnerMenuItem}"
+                  Command="{Binding ExitCommand}"
+                  InputGestureText="Alt+F4"/>
+      </MenuItem>
+      <MenuItem Header="项(_D)" Style="{StaticResource TopMenuItem}">
+        <MenuItem Header="添加新项(_N)..." Style="{StaticResource InnerMenuItem}"
+                  Command="{Binding AddNewEntryCommand}"/>
+        <MenuItem Header="拷贝项(_D)" Style="{StaticResource InnerMenuItem}"
+                  Command="{Binding DuplicateEntryCommand}"/>
+        <MenuItem Header="重命名项(_M)" Style="{StaticResource InnerMenuItem}"
+                  Command="{Binding RenameEntryCommand}"/>
+        <Separator/>
+        <MenuItem Header="删除项(_R)" Style="{StaticResource InnerMenuItem}"
+                  Command="{Binding DeleteEntryCommand}"/>
+      </MenuItem>
+      <MenuItem Header="编辑(_E)" Style="{StaticResource TopMenuItem}">
+        <MenuItem Header="剪切(_T)" Command="Cut" Style="{StaticResource InnerMenuItem}"/>
+        <MenuItem Header="复制(_C)" Command="Copy" Style="{StaticResource InnerMenuItem}"/>
+        <MenuItem Header="粘贴(_P)" Command="Paste" Style="{StaticResource InnerMenuItem}"/>
+        <Separator/>
+        <!--#region page action -->
+        <MenuItem Header="上移(_U)" 
+                  CommandParameter="{Binding SelectedPlotPage}"
+                  Command="{Binding MoveUpPageCommand}"
+                  Style="{StaticResource InnerMenuItem}"/>
+        <MenuItem Header="下移(_D)" 
+                  CommandParameter="{Binding SelectedPlotPage}"
+                  Command="{Binding MoveDownPageCommand}"
+                  Style="{StaticResource InnerMenuItem}"/>
+        <MenuItem Header="预览(_V)" 
+                  Command="{Binding PreviewPageCommand}"
+                  Style="{StaticResource InnerMenuItem}"/>
+        <MenuItem Header="删除(_D)" 
+                  CommandParameter="{Binding SelectedPlotPage}"
+                  Command="{Binding DeletePageCommand}"
+                  Style="{StaticResource InnerMenuItem}"/>
+        <!--#endregion-->
+        <Separator/>
+        <MenuItem Header="环绕(_S)" Style="{StaticResource InnerMenuItem}">
+          <MenuItem Header="波浪(_W) {~}{/~}"
+                    CommandParameter="{x:Static local:SurroundingType.Wavy}" 
+                    Command="{Binding SelectedPlotPage.SurroundNoParamCommand}"
+                    Style="{StaticResource InnerMenuItem}"/>
+          <MenuItem Header="颜色(_C) {#BADFF4}{#}..." 
+                    CommandParameter="{x:Static local:SurroundingType.Color}"
+                    Command="{Binding SelectedPlotPage.SurroundColorCommand}"
+                    Style="{StaticResource InnerMenuItem}"/>
+          <MenuItem Header="冲击(_I) {!}{/!}"
+                    CommandParameter="{x:Static local:SurroundingType.Impact}" 
+                    Command="{Binding SelectedPlotPage.SurroundNoParamCommand}"
+                    Style="{StaticResource InnerMenuItem}"/>
+          <MenuItem Header="变速(_S) {>> 2}{>>}"
+                    CommandParameter="{x:Static local:SurroundingType.ChangeSpeed}"
+                    Command="{Binding SelectedPlotPage.SurroundWithNumCommand}"
+                    Style="{StaticResource InnerMenuItem}"/>
+          <MenuItem Header="变大(_B) {big}{/big}"
+                    CommandParameter="{x:Static local:SurroundingType.Bigger}" 
+                    Command="{Binding SelectedPlotPage.SurroundNoParamCommand}"
+                    Style="{StaticResource InnerMenuItem}"/>
+          <MenuItem Header="凌乱(_M) {%}{/%}"
+                    CommandParameter="{x:Static local:SurroundingType.Messy}" 
+                    Command="{Binding SelectedPlotPage.SurroundNoParamCommand}"
+                    Style="{StaticResource InnerMenuItem}"/>
+        </MenuItem>
+        <MenuItem Header="取消环绕(_N)" Style="{StaticResource InnerMenuItem}">
+          <MenuItem Header="波浪 {~}{/~}" 
+                    CommandParameter="{x:Static local:SurroundingType.Wavy}" 
+                    Command="{Binding SelectedPlotPage.CancelSurroundCommand}"
+                    Style="{StaticResource InnerMenuItem}"/>
+          <MenuItem Header="颜色 {#BADFF4}{#}" 
+                    CommandParameter="{x:Static local:SurroundingType.Color}" 
+                    Command="{Binding SelectedPlotPage.CancelSurroundCommand}"
+                    Style="{StaticResource InnerMenuItem}"/>
+          <MenuItem Header="冲击 {!}{/!}"
+                    CommandParameter="{x:Static local:SurroundingType.Impact}" 
+                    Command="{Binding SelectedPlotPage.CancelSurroundCommand}"
+                    Style="{StaticResource InnerMenuItem}"/>
+          <MenuItem Header="变速 {>> 2}{>>}" 
+                    CommandParameter="{x:Static local:SurroundingType.ChangeSpeed}" 
+                    Command="{Binding SelectedPlotPage.CancelSurroundCommand}"
+                    Style="{StaticResource InnerMenuItem}"/>
+          <MenuItem Header="变大 {big}{/big}" 
+                    CommandParameter="{x:Static local:SurroundingType.Bigger}" 
+                    Command="{Binding SelectedPlotPage.CancelSurroundCommand}"
+                    Style="{StaticResource InnerMenuItem}"/>
+          <MenuItem Header="凌乱 {%}{/%}"
+                    CommandParameter="{x:Static local:SurroundingType.Messy}" 
+                    Command="{Binding SelectedPlotPage.CancelSurroundCommand}"
+                    Style="{StaticResource InnerMenuItem}"/>
+        </MenuItem>
+        <Separator/>
+        <MenuItem Header="插入引用(_R) {+MADELINE}"
+                  CommandParameter="{x:Static local:InsertType.Reference}" 
+                  Command="{Binding SelectedPlotPage.InsertCommand}"
+                  Style="{StaticResource InnerMenuItem}"/>
+        <MenuItem Header="插入停顿(_H) {0.5}"
+                  CommandParameter="{x:Static local:InsertType.Pause}" 
+                  Command="{Binding SelectedPlotPage.InsertCommand}"
+                  Style="{StaticResource InnerMenuItem}"/>
+      </MenuItem>
+      <MenuItem Header="转到或新建(_N)" Style="{StaticResource TopMenuItem}">
+        <MenuItem Header="地图名" Style="{StaticResource InnerMenuItem}">
+          <MenuItem Header="My Awesome Map/Myself/A__good__map.bin" Style="{StaticResource InnerMenuItem}"/>
+          <MenuItem Header="My Awesome Map/Myself/A__good__map__bside.bin" Style="{StaticResource InnerMenuItem}"/>
+        </MenuItem>
+        <MenuItem Header="吃心结束语" Style="{StaticResource InnerMenuItem}">
+          <MenuItem/>
+        </MenuItem>
+      </MenuItem>
+      <MenuItem Header="语言(_S)" Style="{StaticResource TopMenuItem}">
+        <MenuItem Header="没做好别看了(x" Style="{StaticResource InnerMenuItem}"/>
+        <MenuItem Header="新建语言(_N)..." Style="{StaticResource InnerMenuItem}"/>
+        <MenuItem Header="对比当前语言与(_C)" Style="{StaticResource InnerMenuItem}"/>
+      </MenuItem>
+    </Menu>
+    <DockPanel Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" LastChildFill="False">
+      <Border DockPanel.Dock="Right" Margin="8 0" Padding="8 0">
+        <ComboBox ItemsSource="{Binding DialogFiles}" SelectedItem="{Binding DialogFile}"
+                  d:ItemsSource="{d:SampleData ItemCount=1}" d:SelectedIndex="0"
+                  FontSize="14" Padding="4" Margin="0">
+          <ComboBox.Style>
+            <!-- TODO allow switch dialog file here -->
+            <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+              <Setter Property="IsEnabled" Value="True" />
+              <Style.Triggers>
+                <DataTrigger Binding="{Binding EntriesDirty}" Value="True">
+                  <Setter Property="IsEnabled" Value="False" />
+                </DataTrigger>
+              </Style.Triggers>
+            </Style>
+          </ComboBox.Style>
+        </ComboBox>
+      </Border>
+    </DockPanel>
+    <!-- dialog entries search box-->
+    <Border Grid.Row="1" Grid.Column="0" Margin="4" BorderBrush="{x:Static SystemColors.ActiveBorderBrush}" BorderThickness="1">
+      <DockPanel>
+        <TextBlock Text="🔍" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="4 0" DockPanel.Dock="Right"/>
+        <TextBox VerticalContentAlignment="Center"
+               Text="{Binding EntrySearchText, UpdateSourceTrigger=PropertyChanged}"
+               Padding="8 0" FontSize="20" BorderThickness="0"/>
+      </DockPanel>
+    </Border>
+    <!-- dialog entries -->
+    <ListBox d:ItemsSource="{d:SampleData ItemCount=20}" ItemsSource="{Binding EntriesToShow}"
+             Margin="4" SelectedItem="{Binding SelectedEntry}"
+             Grid.Row="2" Grid.Column="0" 
+             HorizontalContentAlignment="Stretch">
+      <ListBox.ItemTemplate>
+        <DataTemplate DataType="local:EntryViewModel">
+          <DockPanel LastChildFill="False">
+            <TextBlock Text="{Binding EntryName}" FontSize="16" Padding="8"/>
+            <TextBlock Text="*" FontSize="16" Padding="8" Visibility="{Binding IsDirty, Converter={StaticResource cvtBoolToVisibility}}" DockPanel.Dock="Right"/>
+          </DockPanel>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+    <!-- dialog entry add -->
+    <UniformGrid Grid.Row="3" Grid.Column="0" Rows="1">
+      <UniformGrid.Resources>
+        <Style TargetType="Button">
+          <Setter Property="FontSize" Value="14"/>
+          <Setter Property="Margin" Value="8 4"/>
+        </Style>
+      </UniformGrid.Resources>
+      <Button Content="添加新项" Command="{Binding AddNewEntryCommand}"/>
+      <Button Content="拷贝项" Command="{Binding DuplicateEntryCommand}"/>
+      <Button Content="重命名项" Command="{Binding RenameEntryCommand}"/>
+      <Button Content="删除项" Command="{Binding DeleteEntryCommand}"/>
+    </UniformGrid>
+    <!-- dialog page edit -->
+    <DockPanel Grid.Row="1" Grid.Column="1" LastChildFill="False">
+      <Button Content="预览" Style="{StaticResource ActionButton}"
+              Command="{Binding PreviewPlotEntryCommand}"/>
+      <Button Content="新建" Style="{StaticResource ActionButton}" 
+              Command="{Binding AddNewPageCommand}"/>
+      <Button Content="拷贝" Style="{StaticResource ActionButton}"
+              CommandParameter="{Binding SelectedPage}"
+              Command="{Binding DuplicatePageCommand}"/>
+      <Button Content="更改项类型" Style="{StaticResource ActionButton}"
+              Click="Button_Click"/>
+
+      <StackPanel Orientation="Horizontal">
+        <StackPanel.Style>
+          <Style TargetType="StackPanel">
+            <Setter Property="IsEnabled" Value="True"/>
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding SelectedPlotPage}" Value="{x:Null}">
+                <Setter Property="IsEnabled" Value="False"/>
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </StackPanel.Style>
+        <TextBlock Text="人物:" Style="{StaticResource CharacterTextBlock}"/>
+        <ComboBox IsEditable="True" MinWidth="128"
+                  Text="{Binding Character}"
+                  ItemsSource="{Binding AvailableCharacters}"/>
+
+        <TextBlock Text="表情:" Style="{StaticResource CharacterTextBlock}"/>
+        <ComboBox IsEditable="True" MinWidth="128"
+                  Text="{Binding SelectedPlotPage.SubCharacter}"
+                  ItemsSource="{Binding AvailableSubCharacters}"
+                  />
+
+        <CheckBox Content="居右" Style="{StaticResource CharacterCheckBox}" IsChecked="{Binding SelectedPlotPage.AtRight}"/>
+
+        <CheckBox Content="镜像" Style="{StaticResource CharacterCheckBox}" IsChecked="{Binding SelectedPlotPage.Flip}"/>
+
+        <CheckBox Content="靠底" Style="{StaticResource CharacterCheckBox}" IsChecked="{Binding SelectedPlotPage.AnchorBottom}"/>
+      </StackPanel>
+    </DockPanel>
+    <!-- dialog pages -->
+
+    <Border Grid.Row="2" Grid.Column="1" Grid.RowSpan="2"
+            BorderThickness="1" CornerRadius="8" Margin="8"
+            BorderBrush="{x:Static SystemColors.ActiveBorderBrush}">
+      <UniformGrid>
+        <ListBox ItemsSource="{Binding CurrentPageViewModels, NotifyOnTargetUpdated=True}"
+                 d:ItemsSource="{d:SampleData ItemCount=10}" d:Visibility="Visible"
+                 SelectedItem="{Binding SelectedPage}"
+                 x:Name="pageSelector" HorizontalContentAlignment="Stretch"
+                 ScrollViewer.CanContentScroll="False"
+                 Margin="4" BorderThickness="0">
+          <ListBox.ItemContainerStyle>
+            <Style TargetType="ListBoxItem">
+              <Setter Property="Margin" Value="0 2"/>
+              <Setter Property="Focusable" Value="False"/>
+              <EventSetter Event="GotFocus" Handler="ListBoxItem_GotFocus"/>
+            </Style>
+          </ListBox.ItemContainerStyle>
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <local:DialogPage/>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+          <ListBox.Style>
+            <Style TargetType="ListBox">
+              <Setter Property="Visibility" Value="Visible"/>
+              <Style.Triggers>
+                <DataTrigger Binding="{Binding CurrentPageViewModels}" Value="{x:Null}">
+                  <Setter Property="Visibility" Value="Collapsed"/>
+                </DataTrigger>
+              </Style.Triggers>
+            </Style>
+          </ListBox.Style>
+        </ListBox>
+        <local:DialogTextBox Text="{Binding CurrentTranslation.Translation, UpdateSourceTrigger=PropertyChanged}" Margin="8" MinHeight="92" 
+                             VerticalAlignment="Top" FontSize="20" Padding="8"
+                             AcceptsReturn="True" VerticalScrollBarVisibility="Auto">
+          <local:DialogTextBox.Style>
+            <Style TargetType="local:DialogTextBox">
+              <Style.Triggers>
+                <DataTrigger Binding="{Binding CurrentTranslation}" Value="{x:Null}">
+                  <Setter Property="Visibility" Value="Collapsed"/>
+                </DataTrigger>
+              </Style.Triggers>
+            </Style>
+          </local:DialogTextBox.Style>
+        </local:DialogTextBox>
+      </UniformGrid>
+    </Border>
+  </Grid>
+</Window>

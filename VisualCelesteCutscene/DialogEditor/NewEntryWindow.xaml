@@ -1,0 +1,35 @@
+﻿<Window x:Class="VisualCelesteCutscene.NewEntryWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:VisualCelesteCutscene"
+        mc:Ignorable="d" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize" MinWidth="512"
+        Title="新建项">
+  <GroupBox Margin="8" Header="项类型" FontSize="16">
+    <StackPanel>
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition/>
+          <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition/>
+          <RowDefinition/>
+          <RowDefinition/>
+        </Grid.RowDefinitions>
+        <RadioButton Content="翻译项" Margin="8" FontSize="20" VerticalContentAlignment="Center" x:Name="btnTrans"
+                     Grid.Row="0" Grid.Column="0"/>
+        <RadioButton Content="剧情项" Margin="8" FontSize="20" VerticalContentAlignment="Center" x:Name="btnPlot" IsChecked="True"
+                     Grid.Row="0" Grid.Column="1"/>
+        <TextBox VerticalContentAlignment="Center" x:Name="textBoxName"
+                 Grid.Row="1" Grid.ColumnSpan="2" Margin="8" Padding="8" FontSize="16"/>
+        <Button Content="确认" Margin="8" FontSize="20" Click="BtnOK_Click"
+                Grid.Row="2" Grid.Column="0"/>
+        <Button Content="取消" Margin="8" FontSize="20" Click="BtnCancel_Click"
+                Grid.Row="2" Grid.Column="1"/>
+      </Grid>
+    </StackPanel>
+  </GroupBox>
+</Window>
