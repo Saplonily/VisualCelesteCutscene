@@ -3,3 +3,4 @@
 artifacts
 *.csproj.user
 **/ModFolder/Code/**
+publishProfiles

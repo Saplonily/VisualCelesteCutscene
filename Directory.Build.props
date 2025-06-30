@@ -7,6 +7,7 @@
     <ProjectRoot>$(MSBuildThisFileDirectory)</ProjectRoot>
     <PathMap>$(ProjectRoot)=~/</PathMap>
     <RollForward>LatestMajor</RollForward>
+    <DebugType>embedded</DebugType>
   </PropertyGroup>
 
 </Project>
