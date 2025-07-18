@@ -6,20 +6,23 @@ namespace VisualCelesteCutscene;
 
 public abstract partial class DialogPageViewModel : ObservableObject, ICloneable
 {
+    // TODO put it here is bad, remove it
     [ObservableProperty]
     public partial int Index { get; set; }
 
+    public event Action? Dirty;
+
     public void ListenOnChanged()
-        => PropertyChanged += static (_, args) =>
+        => PropertyChanged += (_, args) =>
         {
-            // any better way?
+            // TODO same as the above todo
             if (
                 args.PropertyName is
                 not (nameof(DialogPlotPageViewModel.SelectionStart)) and
                 not (nameof(DialogPlotPageViewModel.SelectionLength))
             )
             {
-                App.Current.Messenger.Send<EntryChangedMessage>();
+                Dirty?.Invoke();
             }
         };
 

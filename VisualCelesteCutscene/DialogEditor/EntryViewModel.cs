@@ -7,6 +7,7 @@ namespace VisualCelesteCutscene;
 
 /// <summary>
 /// (<see cref="string"/> EntryName, <see cref="DialogEntry"/> Entry, <see cref="bool"/> Dirty)
+/// , Compared by reference
 /// </summary>
 [DebuggerDisplay("{EntryName}, IsDirty = {IsDirty}")]
 public sealed partial class EntryViewModel : ObservableObject

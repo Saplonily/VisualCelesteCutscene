@@ -23,16 +23,23 @@
   - ~~与对话编辑器进行直接交互~~
   - ~~憋不出来其他描述了，毕竟这项目连开工计划都还暂时没有~~
 
+> 标删除线的功能暂时还未完成
+
 ## 构建
 
 1. 准备好 .NET 8.0 SDK
 2. 直接构建 `VisualCelesteCutscene.csproj` 然后没了
 
-## LICENSE
+## 项目结构
+
+- VisualCelesteCutscene
+  - VisualCelesteCutscene: 主项目，WPF 项目
+  - VisualCelesteCutscene.Helper: 蔚蓝侧的 Helper，用于提供预览功能
+  - CelesteDialog: 共享项目，用于解析蔚蓝的对话文件
+
+## License
 
 项目使用 [MIT License](LICENSE.txt)。
-
-> 然后似乎就没东西说了
 
 ----
 
@@ -49,10 +56,19 @@
   - ~~Direct interaction with dialog editor~~
   - ~~I don't know anything else since it's not started at all~~
 
+> Features with strikethrough are not completed for now
+
 ## Building
 
 1. Prepare .NET 8.0 SDK.
 2. Build `VisualCelesteCutscene.csproj` and that's all.
+
+## Project Structure
+
+- VisualCelesteCutscene
+  - VisualCelesteCutscene: Main project, WPF project
+  - VisualCelesteCutscene.Helper: Helper for Celeste, used to support preview feature
+  - CelesteDialog: Shared project used for parsing Celeste dialog file
 
 ## License
 

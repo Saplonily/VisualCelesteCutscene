@@ -6,7 +6,7 @@ namespace VisualCelesteCutscene;
 // (and refactored by saplonily)
 // (not that easy to refactor tough)
 
-public static class SurroundingUtil
+public static class SurroundingHelper
 {
     /// <summary>
     /// Determines if a string contains a matching "{L param}" pattern to the left of the specified index

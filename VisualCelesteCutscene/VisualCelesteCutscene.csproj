@@ -9,6 +9,7 @@
     <ApplicationIcon>Assets/icon.ico</ApplicationIcon>
     <ApplicationManifest>Properties/app.manifest</ApplicationManifest>
     <MvvmToolkitEnableINotifyPropertyChangingSupport>false</MvvmToolkitEnableINotifyPropertyChangingSupport>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -20,6 +21,7 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.6" />
     <PackageReference Include="PixiEditor.ColorPicker" Version="3.4.2" />
   </ItemGroup>
 
@@ -27,8 +29,25 @@
     <ProjectReference Include="../Saladim.Blockly/Saladim.Blockly.csproj" />
   </ItemGroup>
 
+  <Target Name="AddAssemblyMetadata" BeforeTargets="GetAssemblyAttributes">
+    <ItemGroup>
+      <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute" Condition="'$(SourceRevisionId)' != ''">
+        <_Parameter1>CommitHash</_Parameter1>
+        <_Parameter2>$(SourceRevisionId)</_Parameter2>
+      </AssemblyAttribute>
+      <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute" Condition="'$(ScmRepositoryUrl)' != ''">
+        <_Parameter1>Repository</_Parameter1>
+        <_Parameter2>$(ScmRepositoryUrl)</_Parameter2>
+      </AssemblyAttribute>
+    </ItemGroup>
+  </Target>
+
   <ItemGroup>
-    <Compile Include="../CelesteDialog/**/*.cs" LinkBase="CelesteDialog" />
+    <Compile Include="../CelesteDialog/**/*.cs" LinkBase="0-Shared/CelesteDialog" />
   </ItemGroup>
-  
+
+  <ItemGroup>
+    <Folder Include="Controls\" />
+  </ItemGroup>
+
 </Project>

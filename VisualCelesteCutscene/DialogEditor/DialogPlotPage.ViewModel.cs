@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Windows.Media;
 using CelesteDialog;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -8,16 +9,13 @@ namespace VisualCelesteCutscene;
 
 public sealed partial class DialogPlotPageViewModel : DialogPageViewModel
 {
+    private readonly IEditorDialogHost editorDialogHost;
+
     [ObservableProperty] private string character;
-
     [ObservableProperty] private string subCharacter;
-
     [ObservableProperty] private string dialogText;
-
     [ObservableProperty] private bool anchorBottom;
-
-    [ObservableProperty]
-    private bool inlinedToPrevious;
+    [ObservableProperty] private bool inlinedToPrevious;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(FlipResult))]
@@ -33,20 +31,25 @@ public sealed partial class DialogPlotPageViewModel : DialogPageViewModel
     public bool FlipResult => AtRight ^ Flip;
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(SurroundNoParamCommand))]
-    [NotifyCanExecuteChangedFor(nameof(SurroundWithNumCommand))]
-    [NotifyCanExecuteChangedFor(nameof(SurroundColorCommand))]
-    [NotifyCanExecuteChangedFor(nameof(CancelSurroundCommand))]
-    [NotifyCanExecuteChangedFor(nameof(InsertCommand))]
+    [NotifyCanExecuteChangedFor(
+        nameof(SurroundNoParamCommand),
+        nameof(SurroundWithNumCommand),
+        nameof(SurroundColorCommand),
+        nameof(CancelSurroundCommand),
+        nameof(InsertCommand))]
     public partial int SelectionStart { get; set; }
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(SurroundNoParamCommand))]
-    [NotifyCanExecuteChangedFor(nameof(SurroundWithNumCommand))]
-    [NotifyCanExecuteChangedFor(nameof(SurroundColorCommand))]
-    [NotifyCanExecuteChangedFor(nameof(InsertCommand))]
+    [NotifyCanExecuteChangedFor(
+        nameof(SurroundNoParamCommand),
+        nameof(SurroundWithNumCommand),
+        nameof(SurroundColorCommand),
+        nameof(CancelSurroundCommand),
+        nameof(InsertCommand))]
     public partial int SelectionLength { get; set; }
 
+
+    // TODO should these be moved to view instead of viewmodel?
     public RelayCommand<SurroundingType> SurroundNoParamCommand { get; }
 
     public RelayCommand<SurroundingType> SurroundWithNumCommand { get; }
@@ -67,11 +70,14 @@ public sealed partial class DialogPlotPageViewModel : DialogPageViewModel
         SurroundColorCommand = null!;
         CancelSurroundCommand = null!;
         InsertCommand = null!;
+        editorDialogHost = null!;
     }
 #endif
 
-    public DialogPlotPageViewModel(DialogPlotPage page)
+    public DialogPlotPageViewModel(DialogPlotPage page, IEditorDialogHost editorDialogHost)
     {
+        this.editorDialogHost = editorDialogHost;
+
         dialogText = page.Text;
         character = page.Portrait.Character;
         subCharacter = page.Portrait.SubCharacter;
@@ -113,7 +119,7 @@ public sealed partial class DialogPlotPageViewModel : DialogPageViewModel
         string toInsert = type switch
         {
             SurroundingType.ChangeSpeed => ">>",
-            _ => throw new ArgumentException("Invalid with-param surrounding type.", nameof(type))
+            _ => throw new ArgumentException("Invalid with-num-param surrounding type.", nameof(type))
         };
         int start = SelectionStart;
         int length = SelectionLength;
@@ -126,7 +132,7 @@ public sealed partial class DialogPlotPageViewModel : DialogPageViewModel
 
     private void OnSurroundColor()
     {
-        Color? reply = App.Current.Messenger.Send<RequestColorPickMessage>();
+        Color? reply = editorDialogHost.RequestColor();
         if (reply is null) return;
         Color color = reply.Value;
         int start = SelectionStart;
@@ -142,7 +148,7 @@ public sealed partial class DialogPlotPageViewModel : DialogPageViewModel
     {
         int start = SelectionStart;
         (string left, string right) = GetSurroundingText(type);
-        DialogText = SurroundingUtil.RemoveMatchingLR(DialogText, SelectionStart, left, right, out int leftLength);
+        DialogText = SurroundingHelper.RemoveMatchingLR(DialogText, SelectionStart, left, right, out int leftLength);
         SelectionStart = start - leftLength;
     }
 
@@ -164,7 +170,7 @@ public sealed partial class DialogPlotPageViewModel : DialogPageViewModel
     private bool CanCancelSurroundExecute(SurroundingType type)
     {
         (string left, string right) = GetSurroundingText(type);
-        return SurroundingUtil.HasMatchingLR(DialogText, SelectionStart, left, right);
+        return SurroundingHelper.HasMatchingLR(DialogText, SelectionStart, left, right);
     }
 
     private static (string left, string right) GetSurroundingText(SurroundingType type) => type switch
@@ -199,7 +205,8 @@ public sealed partial class DialogPlotPageViewModel : DialogPageViewModel
                 new DialogPortraitState(Character, SubCharacter, AtRight, AnchorBottom, Flip),
                 DialogText,
                 InlinedToPrevious
-                )
+                ),
+            editorDialogHost
             );
 
     public override DialogPlotPage ToModel()

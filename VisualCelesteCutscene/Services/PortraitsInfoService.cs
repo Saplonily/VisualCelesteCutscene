@@ -94,7 +94,7 @@ public sealed class PortraitsImageService
             string fullPath = Path.Combine(path, subPath);
             if (File.Exists(fullPath))
             {
-                var image = new BitmapImage(new Uri(fullPath));
+                var image = new BitmapImage(new Uri(Path.GetFullPath(fullPath)));
                 cachedImages[info] = image;
                 return image;
             }

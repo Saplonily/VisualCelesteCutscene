@@ -3,6 +3,7 @@ using System.Windows.Controls;
 
 namespace VisualCelesteCutscene;
 
+// TODO this should be a textbox useful for editing dialog
 public sealed class DialogTextBox : TextBox
 {
     public static readonly DependencyProperty BindableSelectionStartProperty =

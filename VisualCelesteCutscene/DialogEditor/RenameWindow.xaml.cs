@@ -15,6 +15,11 @@ public partial class RenameWindow : Window
 
     private void BtnOK_Click(object sender, RoutedEventArgs e)
     {
+        if (!DialogHelper.IsValidDialogKey(textBox.Text))
+        {
+            MessageBox.Show("项名称必须仅包含大小写字母，数字以及下划线。", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
         RenameResult = textBox.Text;
         DialogResult = true;
     }

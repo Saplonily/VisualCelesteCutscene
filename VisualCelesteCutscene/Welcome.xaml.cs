@@ -11,10 +11,21 @@ public partial class Welcome : Window
     public Welcome()
     {
         InitializeComponent();
+        Loaded += Welcome_Loaded;
+    }
+
+    private void Welcome_Loaded(object sender, RoutedEventArgs e)
+    {
+        string testFile = @"C:\Program Files (x86)\Steam\steamapps\common\Celeste\Mods\MyFirstMod";
+
+        DialogEditorWindow win = new(CelesteMapMod.ReadFrom(testFile)!);
+        win.Show();
+        Hide();
     }
 
     private void BtnOpenMod_Click(object sender, RoutedEventArgs e)
     {
+#if RELEASE
         var result = MessageBox.Show(
             "目前程序正在处于极早期的开发中\n请在打开 Mod 之前务必备份该 Mod 或者仅打开用于测试的 Mod",
             "警告",
@@ -23,24 +34,21 @@ public partial class Welcome : Window
             );
         if (result is not MessageBoxResult.OK)
             return;
-
+#endif
         OpenFileDialog ofd = new();
         ofd.Filter = "everest.yaml file (*.yaml)|*.yaml";
         if (ofd.ShowDialog() is true)
         {
-            DialogEditor? win = null;
+            DialogEditorWindow? win = null;
             try
             {
-                CelesteMapMod? mapMod = CelesteMapMod.ReadFrom(Path.GetDirectoryName(ofd.FileName) ?? string.Empty) 
-                    ?? throw new FormatException();
-                DialogEditorViewModel viewModel = new(mapMod);
-                win = new(viewModel);
-                win.Show();
+                win = OpenMod(ofd.FileName);
                 Hide();
+                win.Show();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString(), "打开失败", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(ex.ToString(), "打开失败，请报告此问题", MessageBoxButton.OK, MessageBoxImage.Error);
                 win?.Close();
 #if DEBUG
                 if (Debugger.IsAttached)
@@ -48,6 +56,14 @@ public partial class Welcome : Window
 #endif
             }
         }
+    }
+
+    private static DialogEditorWindow OpenMod(string yamlPath)
+    {
+        CelesteMapMod? mapMod = CelesteMapMod.ReadFrom(Path.GetDirectoryName(yamlPath) ?? string.Empty)
+            ?? throw new FormatException();
+
+        return new DialogEditorWindow(mapMod);
     }
 
     private void BtnExit_Click(object sender, RoutedEventArgs e)

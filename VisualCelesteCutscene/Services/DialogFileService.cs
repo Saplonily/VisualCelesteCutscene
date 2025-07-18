@@ -10,14 +10,20 @@ namespace VisualCelesteCutscene;
 
 public sealed class DialogFileService
 {
-	public DialogFileService()
-	{
+    public DialogFileService()
+    {
 
-	}
+    }
 
-	public DialogDocument ReadFrom(string file)
-	{
-		using FileStream fs = new(file, FileMode.Open, FileAccess.Read);
-		return new(fs);
-	}
+    public DialogDocument ReadFrom(string file)
+    {
+        using FileStream fs = new(file, FileMode.Open, FileAccess.Read);
+        return new(fs);
+    }
+
+    public void SaveTo(DialogDocument dialogDocument, string file)
+    {
+        using FileStream fs = new(file, FileMode.Create, FileAccess.Write);
+        dialogDocument.SaveTo(fs);
+    }
 }

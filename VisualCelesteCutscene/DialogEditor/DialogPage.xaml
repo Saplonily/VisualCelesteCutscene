@@ -10,7 +10,6 @@
     <Grid DockPanel.Dock="Right">
       <Grid.Resources>
         <Style TargetType="Button">
-          <Setter Property="Margin" Value="1"/>
           <Setter Property="Padding" Value="4 0"/>
         </Style>
       </Grid.Resources>
@@ -23,20 +22,20 @@
         <ColumnDefinition/>
       </Grid.ColumnDefinitions>
       <Button Content="⬆️" Grid.Row="0" Grid.Column="0" 
-              CommandParameter="{Binding .}"
-              Command="{Binding DataContext.MoveUpPageCommand, RelativeSource={RelativeSource AncestorType=local:DialogEditor}}" />
+              CommandParameter="{Binding .}" Margin="1 0 1 1"
+              Command="{Binding DataContext.MoveUpPageCommand, RelativeSource={RelativeSource AncestorType=local:DialogEditView}}" />
 
       <Button Content="⬇️" Grid.Row="1" Grid.Column="0" 
-              CommandParameter="{Binding .}"
-              Command="{Binding DataContext.MoveDownPageCommand, RelativeSource={RelativeSource AncestorType=local:DialogEditor}}" />
+              CommandParameter="{Binding .}" Margin="1 1 1 0"
+              Command="{Binding DataContext.MoveDownPageCommand, RelativeSource={RelativeSource AncestorType=local:DialogEditView}}" />
 
       <Button Content="🔍" Grid.Row="0" Grid.Column="1"
-              CommandParameter="{Binding .}"
-              Command="{Binding DataContext.PreviewPageCommand, RelativeSource={RelativeSource AncestorType=local:DialogEditor}}"/>
+              CommandParameter="{Binding .}" Margin="1 0 1 1"
+              Command="{Binding DataContext.PreviewPageCommand, RelativeSource={RelativeSource AncestorType=local:DialogEditView}}"/>
 
       <Button Content="🗑️" Grid.Row="1" Grid.Column="1" 
-              CommandParameter="{Binding .}"
-              Command="{Binding DataContext.DeletePageCommand, RelativeSource={RelativeSource AncestorType=local:DialogEditor}}" />
+              CommandParameter="{Binding .}" Margin="1 1 1 0"
+              Command="{Binding DataContext.DeletePageCommand, RelativeSource={RelativeSource AncestorType=local:DialogEditView}}" />
 
       <!-- InlinedToPrevious indicator -->
       <Line Grid.Column="1" Margin="0 -32 -3 0"
@@ -92,12 +91,13 @@
               </Image.RenderTransformOrigin>
             </Image>
             <local:DialogTextBox FontSize="20" Text="{Binding DialogText, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True"
-                                 VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                                 VerticalContentAlignment="Center" HorizontalContentAlignment="Center" IsUndoEnabled="False"
                                  d:Text="Hi I'm Madeline&#xA;This is the second line&#xA;And this is the third"
                                  MaxLines="3" LostFocus="TextBox_LostFocus" PreviewKeyDown="TextBox_PreviewKeyDown"
                                  BindableSelectionStart="{Binding SelectionStart}"
                                  BindableSelectionLength="{Binding SelectionLength}">
               <local:DialogTextBox.ContextMenu>
+                <!-- TODO this context menu can be shared -->
                 <ContextMenu>
                   <MenuItem Header="环绕波浪(_W) {~}{/~}"
                             CommandParameter="{x:Static local:SurroundingType.Wavy}" 

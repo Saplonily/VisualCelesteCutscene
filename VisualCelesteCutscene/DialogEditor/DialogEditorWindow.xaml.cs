@@ -2,53 +2,36 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using CelesteDialog;
 using CommunityToolkit.Mvvm.Messaging;
 
 namespace VisualCelesteCutscene;
 
-public partial class DialogEditor : Window,
+public partial class DialogEditorWindow : Window,
     IRecipient<RequestNewPageMessage>,
-    IRecipient<RequestConfirmMessage>,
-    IRecipient<RequestColorPickMessage>,
     IRecipient<RequestNewEntryMessage>,
-    IRecipient<RequestRenameMessage>
+    IRecipient<RequestRenameMessage>,
+    IEditorDialogHost
 {
     private bool gotoWelcomeOnClosed = true;
-    private readonly DialogEditorViewModel viewModel;
+    private readonly DialogEditorWindowViewModel viewModel;
 
-    public DialogEditor(DialogEditorViewModel viewModel)
+    public DialogEditorWindow(CelesteMapMod celesteMapMod)
     {
         InitializeComponent();
-
-        DataContext = viewModel;
-        viewModel.RequestClose += ViewModel_RequestClose;
-        viewModel.RequestExit += ViewModel_RequestExit;
+        DataContext = viewModel = new(celesteMapMod, this);
 
         var messenger = App.Current.Messenger;
         messenger.Register<RequestNewPageMessage>(this);
-        messenger.Register<RequestConfirmMessage>(this);
-        messenger.Register<RequestColorPickMessage>(this);
         messenger.Register<RequestNewEntryMessage>(this);
         messenger.Register<RequestRenameMessage>(this);
-        this.viewModel = viewModel;
-    }
-
-    private void ViewModel_RequestExit()
-    {
-        gotoWelcomeOnClosed = false;
-        Close();
-    }
-
-    private void ViewModel_RequestClose()
-    {
-        gotoWelcomeOnClosed = true;
-        Close();
     }
 
     protected override void OnClosed(EventArgs e)
     {
         base.OnClosed(e);
+        App.Current.Messenger.UnregisterAll(this);
         if (gotoWelcomeOnClosed)
             App.Current.WelcomeWindow.Show();
         else
@@ -58,7 +41,8 @@ public partial class DialogEditor : Window,
     protected override void OnClosing(CancelEventArgs e)
     {
         base.OnClosing(e);
-        if (viewModel.EntriesDirty)
+
+        if (viewModel.Edits.Any(e => e.Edit.IsDirty))
         {
             var result = MessageBox.Show(
                 this,
@@ -94,23 +78,22 @@ public partial class DialogEditor : Window,
             message.Reply(null);
     }
 
-    void IRecipient<RequestConfirmMessage>.Receive(RequestConfirmMessage message)
-    {
-        MessageBoxResult result = MessageBox.Show(message.Message, message.Title, MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
-        message.Reply(result is MessageBoxResult.Yes);
-    }
+    bool IEditorDialogHost.RequestConfirm(string message, string title)
+        => MessageBox.Show(message, title, MessageBoxButton.YesNo, MessageBoxImage.Exclamation) == MessageBoxResult.Yes;
 
-    void IRecipient<RequestColorPickMessage>.Receive(RequestColorPickMessage message)
+    Color? IEditorDialogHost.RequestColor()
     {
         ColorPickerWindow win = new()
         {
             ShowInTaskbar = false,
             Owner = this
         };
-        if (win.ShowDialog() is true)
-            message.Reply(win.Color);
-        else
-            message.Reply(null);
+        return win.ShowDialog() is true ? win.Color : null;
+    }
+
+    void IEditorDialogHost.ShowErrorDialog(string message, string title)
+    {
+        MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Error);
     }
 
     void IRecipient<RequestNewEntryMessage>.Receive(RequestNewEntryMessage message)
@@ -126,11 +109,6 @@ public partial class DialogEditor : Window,
             message.Reply(null);
     }
 
-    private void ListBoxItem_GotFocus(object sender, RoutedEventArgs e)
-    {
-        ((ListBoxItem)sender).IsSelected = true;
-    }
-
     void IRecipient<RequestRenameMessage>.Receive(RequestRenameMessage message)
     {
         RenameWindow win = new(message.OriginalName)
@@ -144,13 +122,15 @@ public partial class DialogEditor : Window,
             message.Reply(null);
     }
 
-    private void DialogTextBox_TextChanged(object sender, TextChangedEventArgs e)
+    private void MenuItemClose_Click(object sender, RoutedEventArgs e)
     {
-        App.Current.Messenger.Send<EntryChangedMessage>();
+        gotoWelcomeOnClosed = true;
+        Close();
     }
 
-    private void Button_Click(object sender, RoutedEventArgs e)
+    private void MenuItemExit_Click(object sender, RoutedEventArgs e)
     {
-        MessageBox.Show("别点了这个功能还没做(x");
+        gotoWelcomeOnClosed = false;
+        Close();
     }
 }

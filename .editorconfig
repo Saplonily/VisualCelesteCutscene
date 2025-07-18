@@ -3,4 +3,7 @@
 dotnet_diagnostic.IDE0028.severity = silent
 dotnet_diagnostic.IDE0130.severity = silent
 dotnet_diagnostic.IDE0063.severity = silent
+dotnet_diagnostic.IDE0305.severity = silent
+dotnet_diagnostic.IDE0017.severity = silent
+dotnet_diagnostic.IDE0090.severity = silent
 dotnet_diagnostic.MVVMTK0042.severity = silent
