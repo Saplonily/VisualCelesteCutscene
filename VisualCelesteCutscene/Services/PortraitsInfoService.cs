@@ -64,7 +64,7 @@ public sealed class PortraitsImageService
                 if (animType is not "Loop")
                     continue;
                 string subCharacterName = subNode.Attributes!["id"]!.InnerText
-                    .RemovePrefix("idle_", "talk_", "begin_");
+                    .RemoveOneOfPrefixes("idle_", "talk_", "begin_");
                 string subPath = subNode.Attributes!["path"]!.InnerText;
                 imagePaths[new(characterName, subCharacterName)] = basePath + subPath + "00.png";
                 if (charToSubChars.TryGetValue(characterName, out var list))

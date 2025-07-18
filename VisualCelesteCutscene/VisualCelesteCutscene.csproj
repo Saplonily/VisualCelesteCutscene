@@ -15,7 +15,7 @@
   <PropertyGroup>
     <Version>0.0.1-alpha</Version>
     <Copyright>Copyright © 2025 Saplonily. Licensed under the MIT License.</Copyright>
-    <Description>A visual cutscene editor for Celeste.</Description>
+    <Description>Celeste Visual Cutscene Editor</Description>
     <AssemblyTitle>$(Description)</AssemblyTitle>
   </PropertyGroup>
 

@@ -128,7 +128,7 @@ public sealed partial class DialogEditViewModel : ObservableObject
 
         ChangeEntryTypeCommand = new(OnChangeEntryType, CanActionOnEntryExecute);
 
-        GotoOrCreateEntryCommand = new(OnGotoOrCreateEntry);
+        GotoOrCreateEntryCommand = new(OnGotoOrCreateEntry!);
 
         AvailableSubCharacters = null!;
         AvailableCharacters = new(App.Current.PortraitsInfoService.GetCharacters());
@@ -167,21 +167,16 @@ public sealed partial class DialogEditViewModel : ObservableObject
             return;
         }
 
-        SelectEntry(value);
-    }
-
-    private void SelectEntry(EntryViewModel entryViewModel)
-    {
-        if (entryEdits.TryGetValue(entryViewModel, out EntryEditViewModel? edit))
+        if (entryEdits.TryGetValue(value, out EntryEditViewModel? edit))
         {
             SelectedEntryEdit = edit;
             return;
         }
 
-        SelectEntryNew(entryViewModel);
+        SetEditTo(value);
     }
 
-    private void SelectEntryNew(EntryViewModel entryViewModel)
+    private void SetEditTo(EntryViewModel entryViewModel)
     {
         DialogEntry entry = entryViewModel.Entry;
         EntryEditViewModel? newEdit;
@@ -360,7 +355,7 @@ public sealed partial class DialogEditViewModel : ObservableObject
     {
         EntryViewModel viewModel = new EntryViewModel(
             entryName,
-            isPlotEntry ? new DialogTranslationEntry() : new DialogPlotEntry()
+            isPlotEntry ? new DialogPlotEntry() : new DialogTranslationEntry()
             );
         viewModel.IsDirty = true;
         entries.Insert(entries.IndexOf(SelectedEntry!) + 1, viewModel);
@@ -443,7 +438,7 @@ public sealed partial class DialogEditViewModel : ObservableObject
 
         SelectedEntry.IsDirty = true;
         IsDirty = true;
-        SelectEntryNew(SelectedEntry);
+        SetEditTo(SelectedEntry);
         // TODO hmmm any better way?
         AddNewPageCommand.NotifyCanExecuteChanged();
     }
@@ -454,11 +449,11 @@ public sealed partial class DialogEditViewModel : ObservableObject
         if (entry is null)
         {
             var newEntry = AddNewEntry(entryName, false);
-            SelectEntry(newEntry);
+            SelectedEntry = newEntry;
         }
         else
         {
-            SelectEntry(entry);
+            SelectedEntry = entry;
         }
     }
 

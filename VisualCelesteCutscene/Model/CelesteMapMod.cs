@@ -57,16 +57,24 @@ public sealed class CelesteMapMod
         string mapsFolder = Path.Combine(folderPath, "Maps");
         string vccMetaPath = Path.Combine(folderPath, ".vcc_meta");
 
-        List<string> dialogFiles =
-            Directory.EnumerateFiles(dialogFolder)
-            .Select(p => Path.GetRelativePath(dialogFolder, p))
-            .ToList();
-        List<string> mapsFiles =
-            Directory.EnumerateFiles(mapsFolder, "*.bin", SearchOption.AllDirectories)
-            .Select(p => Path.GetRelativePath(mapsFolder, p))
-            .ToList();
+        List<string>? dialogFiles = null;
+        List<string>? mapsFiles = null;
 
-        return new CelesteMapMod(folderPath, modName, mapsFiles, dialogFiles);
+        if (Directory.Exists(dialogFolder))
+        {
+            dialogFiles = Directory.EnumerateFiles(dialogFolder)
+                .Select(p => Path.GetRelativePath(dialogFolder, p))
+                .ToList();
+        }
+
+        if (Directory.Exists(mapsFolder))
+        {
+            mapsFiles = Directory.EnumerateFiles(mapsFolder, "*.bin", SearchOption.AllDirectories)
+                .Select(p => Path.GetRelativePath(mapsFolder, p))
+                .ToList();
+        }
+
+        return new CelesteMapMod(folderPath, modName, mapsFiles ?? [], dialogFiles ?? []);
     }
 
     public string GetDialogFile(string dialogFileName)

@@ -53,7 +53,7 @@
                   Click="MenuItemClose_Click"
                   InputGestureText="Ctrl+F4"/>
           <Separator/>
-          <MenuItem Header="退出(_X)" Style="{StaticResource InnerMenuItem}"
+          <MenuItem Header="退出(_X)" Style="{StaticResource InnerNonCommandMenuItem}"
                   Click="MenuItemExit_Click"
                   InputGestureText="Alt+F4"/>
         </MenuItem>
@@ -154,18 +154,22 @@
                   Style="{StaticResource InnerMenuItem}"/>
         </MenuItem>
         <MenuItem Header="转到或新建(_N)" Style="{StaticResource TopMenuItem}">
-          <MenuItem Header="地图名" Style="{StaticResource InnerMenuItem}">
-            <MenuItem Header="My Awesome Map/Myself/A__good__map.bin" Style="{StaticResource InnerMenuItem}"/>
-            <MenuItem Header="My Awesome Map/Myself/A__good__map__bside.bin" Style="{StaticResource InnerMenuItem}"/>
-            <MenuItem.ItemTemplate>
-              <DataTemplate>
-                
-              </DataTemplate>
-            </MenuItem.ItemTemplate>
-          </MenuItem>
-          <MenuItem Header="吃心结束语" Style="{StaticResource InnerMenuItem}">
-            <MenuItem/>
-          </MenuItem>
+          <MenuItem.Resources>
+            <Style TargetType="MenuItem" x:Key="goceMenuItem">
+              <Setter Property="Header" Value="{Binding Content}"/>
+              <Setter Property="CommandParameter" Value="{Binding Content}"/>
+              <Setter Property="Command" Value="{Binding Command}"/>
+            </Style>
+          </MenuItem.Resources>
+          <MenuItem Header="地图名(_N)" Style="{StaticResource InnerNonCommandMenuItem}" 
+                    ItemsSource="{Binding GoceMapNameActions}"
+                    ItemContainerStyle="{StaticResource goceMenuItem}"/>
+          <MenuItem Header="吃心结束语(_P)" Style="{StaticResource InnerNonCommandMenuItem}"
+                    ItemsSource="{Binding GoceMapPoemActions}"
+                    ItemContainerStyle="{StaticResource goceMenuItem}"/>
+          <MenuItem Header="明信片(_C)" Style="{StaticResource InnerNonCommandMenuItem}"
+                    ItemsSource="{Binding GoceMapPostCardActions}"
+                    ItemContainerStyle="{StaticResource goceMenuItem}"/>
         </MenuItem>
         <MenuItem Header="语言(_S)" Style="{StaticResource TopMenuItem}">
           <MenuItem Header="没做好别看了(x" Style="{StaticResource InnerMenuItem}"/>
