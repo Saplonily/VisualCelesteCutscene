@@ -53,7 +53,7 @@
         </Style>
       </StackPanel.Resources>
       <Button Content="打开 Mod" Click="BtnOpenMod_Click"/>
-      <Button Content="选项" Click="BtnOptions_Click"/>
+      <Button Content="设置" Click="BtnSettings_Click"/>
       <Button Content="关于" Click="BtnAbout_Click"/>
       <Button Content="退出" Click="BtnExit_Click"/>
     </StackPanel>

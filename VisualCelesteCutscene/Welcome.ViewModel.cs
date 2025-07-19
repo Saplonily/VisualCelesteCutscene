@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.ComponentModel;
+using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -27,7 +28,6 @@ public sealed class WelcomeViewModel : ObservableObject
 
     private void OnOpenMod(string modFolder)
     {
-        welcomeDialogHost.GotoEditor(modFolder);
         var recentMods = userData.RecentMods;
 
         int index = -1;
@@ -44,6 +44,8 @@ public sealed class WelcomeViewModel : ObservableObject
             recentMods.RemoveAt(index);
 
         recentMods.Insert(0, modFolder);
+
+        welcomeDialogHost.GotoEditor(modFolder);
     }
 
     private static bool PathEqual(string pathA, string pathB)

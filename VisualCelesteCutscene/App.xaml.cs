@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Reflection;
 using System.Text.Json;
 using System.Windows;
@@ -23,7 +24,7 @@ public partial class App : Application
 
     public UserData UserData { get; set; }
 
-    private string SaveFile;
+    private readonly string SaveFile;
 
     public App()
     {
@@ -37,26 +38,14 @@ public partial class App : Application
         Directory.CreateDirectory(path);
         SaveFile = Path.Combine(path, "save.json");
 
-        UserData = LoadUserData();
+        LoadUserData();
 
         DialogFileService = new();
         PortraitsInfoService = new();
-        try
-        {
-            PortraitsInfoService.AddPortraitsSource(
-                @"C:\Program Files (x86)\Steam\steamapps\common\Celeste\Content\Graphics\Portraits.xml"
-            );
-            PortraitsInfoService.AddImageSearchPath(
-                @"C:\Program Files (x86)\Steam\steamapps\common\Celeste\Celeste Graphics Dump v1400\Portraits"
-            );
-            Messenger = WeakReferenceMessenger.Default;
-            PreviewService = new();
-        }
-        catch (Exception e)
-        {
-            File.WriteAllText("log-vcc.txt", e.ToString());
-            throw;
-        }
+        if (UserData.CheckPathValid())
+            PortraitsInfoService.InitBy(UserData);
+        Messenger = WeakReferenceMessenger.Default;
+        PreviewService = new();
     }
 
     public void BackToWelcome()
@@ -67,7 +56,7 @@ public partial class App : Application
 
     public void LeaveFromWelcome(string yamlPath)
     {
-        SaveUserData(UserData);
+        SaveUserData();
         var win = OpenMod(yamlPath);
         win.Show();
     }
@@ -89,23 +78,24 @@ public partial class App : Application
     protected override void OnExit(ExitEventArgs e)
     {
         base.OnExit(e);
-        SaveUserData(UserData);
+        SaveUserData();
     }
 
-    private UserData LoadUserData()
+    [MemberNotNull(nameof(UserData))]
+    public void LoadUserData()
     {
-        if (!File.Exists(SaveFile)) return new UserData();
+        if (!File.Exists(SaveFile)) UserData = new UserData();
         using (FileStream fs = new(SaveFile, FileMode.Open, FileAccess.Read))
         {
-            return JsonSerializer.Deserialize<UserData>(fs) ?? new();
+            UserData = JsonSerializer.Deserialize<UserData>(fs) ?? new();
         }
     }
 
-    private void SaveUserData(UserData userData)
+    public void SaveUserData()
     {
         using (FileStream fs = new(SaveFile, FileMode.Create, FileAccess.Write))
         {
-            JsonSerializer.Serialize(fs, userData);
+            JsonSerializer.Serialize(fs, UserData);
         }
     }
 }

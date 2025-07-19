@@ -46,8 +46,4 @@
     <Compile Include="../CelesteDialog/**/*.cs" LinkBase="0-Shared/CelesteDialog" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controls\" />
-  </ItemGroup>
-
 </Project>

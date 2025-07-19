@@ -10,15 +10,37 @@ namespace VisualCelesteCutscene;
 public partial class Welcome : Window, IWelcomeDialogHost
 {
     private readonly WelcomeViewModel viewModel;
+    private readonly UserData userData;
 
     public Welcome(UserData userData)
     {
         InitializeComponent();
         DataContext = viewModel = new WelcomeViewModel(this, userData);
+        this.userData = userData;
+        ContentRendered += Welcome_ContentRendered;
+    }
+
+    private void Welcome_ContentRendered(object? sender, EventArgs e)
+    {
+        if (!userData.IsNotFirstTime)
+        {
+            MessageBox.Show("""
+                欢迎来到 Visual Celeste Cutscene 系列之
+                - Visual Celeste Dialog Editor
+                一个可视化的蔚蓝剧情文件的编辑器
+                (一个因为 GUI 编程能力不足耗费我脑细胞的东西)
+
+                要开始使用的话，记得先前往设置配置你的蔚蓝路径和 Graphics Dump 路径
+                """, "欢迎", MessageBoxButton.OK
+                );
+            userData.IsNotFirstTime = true;
+            App.Current.SaveUserData();
+        }
     }
 
     private void BtnOpenMod_Click(object sender, RoutedEventArgs e)
     {
+        if (!CheckAndWarnPath()) return;
         string? file = RequestModFolder();
         if (file is null) return;
         viewModel.OpenMod.Execute(file);
@@ -34,20 +56,25 @@ public partial class Welcome : Window, IWelcomeDialogHost
 
     private void BtnExit_Click(object sender, RoutedEventArgs e)
         => Close();
-    
+
     private void BtnAbout_Click(object sender, RoutedEventArgs e)
     {
         MessageBox.Show("这里暂时还没有关于(x");
     }
 
-    private void BtnOptions_Click(object sender, RoutedEventArgs e)
+    private void BtnSettings_Click(object sender, RoutedEventArgs e)
     {
-        MessageBox.Show("这里暂时还没有选项(x");
+        new SettingsWindow(userData)
+        {
+            Owner = this,
+            ShowInTaskbar = false
+        }.ShowDialog();
     }
 
     private void ListBoxItemRecentMods_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
         e.Handled = true;
+        if (!CheckAndWarnPath()) return;
         var item = ((ListBoxItem)sender).Content;
         if (item is null) return;
         viewModel.OpenMod.Execute(item);
@@ -58,6 +85,7 @@ public partial class Welcome : Window, IWelcomeDialogHost
         if (e.Key is not Key.Enter and not Key.Space)
             return;
         e.Handled = true;
+        if (!CheckAndWarnPath()) return;
         var item = ((ListBoxItem)sender).Content;
         if (item is null) return;
         viewModel.OpenMod.Execute(item);
@@ -92,5 +120,15 @@ public partial class Welcome : Window, IWelcomeDialogHost
         var win = OpenMod(modFolder);
         win.Show();
         Close();
+    }
+
+    private bool CheckAndWarnPath()
+    {
+        if (!userData.CheckPathValid())
+        {
+            MessageBox.Show("设置中配置的路径存在问题，请前往设置窗口查看。", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+            return false;
+        }
+        return true;
     }
 }

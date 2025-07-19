@@ -113,4 +113,18 @@ public sealed class PortraitsImageService
         else
             return [];
     }
+
+    public void Clear()
+    {
+        imageSearchPaths.Clear();
+        imagePaths.Clear();
+        cachedImages.Clear();
+        charToSubChars.Clear();
+    }
+
+    public void InitBy(UserData userData)
+    {
+        AddPortraitsSource(Path.Combine(userData.CelesteGamePath, "Content", "Graphics", "Portraits.xml"));
+        AddImageSearchPath(Path.Combine(userData.CelesteGraphicsDumpPath, "Portraits"));
+    }
 }

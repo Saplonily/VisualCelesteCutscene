@@ -1,0 +1,67 @@
+﻿<Window x:Class="VisualCelesteCutscene.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:VisualCelesteCutscene"
+        mc:Ignorable="d" WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        d:DataContext="{d:DesignInstance Type=local:SettingsWindowViewModel}"
+        Title="设置" Height="300" Width="810">
+  <Grid Margin="16">
+    <Grid.Resources>
+      <Style TargetType="TextBlock">
+        <Setter Property="Margin" Value="8" />
+        <Setter Property="FontSize" Value="16" />
+      </Style>
+      <Style TargetType="TextBox">
+        <Setter Property="Margin" Value="8" />
+        <Setter Property="Padding" Value="2" />
+        <Setter Property="FontSize" Value="16" />
+      </Style>
+      <Style TargetType="Button">
+        <Setter Property="Margin" Value="8" />
+        <Setter Property="Padding" Value="4" />
+      </Style>
+    </Grid.Resources>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition/>
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="Auto"/>
+      <ColumnDefinition/>
+      <ColumnDefinition Width="Auto"/>
+    </Grid.ColumnDefinitions>
+    <TextBlock Text="游戏根目录：" 
+               Grid.Row="0" Grid.Column="0" />
+    <TextBlock Text="Graphics Dump 目录："
+               Grid.Row="2" Grid.Column="0" />
+    <TextBox Text="{Binding CelesteGamePath, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
+             Grid.Row="0" Grid.Column="1"
+             x:Name="gamePathTextBox"/>
+    <TextBox Text="{Binding CelesteGraphicsDumpPath, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
+             Grid.Row="2" Grid.Column="1" 
+             x:Name="dumpPathTextBox"/>
+    <Button Content="📁" Click="ButtonGamePath_Click"
+            Grid.Row="0" Grid.Column="2"/>
+    <Button Content="📁" Click="ButtonDumpPath_Click"
+            Grid.Row="2" Grid.Column="2"/>
+
+    <TextBlock Text="{Binding ElementName=gamePathTextBox, Path=(Validation.Errors)[0].ErrorContent}"
+               Visibility="{Binding ElementName=gamePathTextBox, Path=(Validation.HasError), Converter={StaticResource cvtBoolToVisibility}}"
+               d:Visibility="Visible"
+               d:Text="有错误呐 qwq"
+               Foreground="Red"
+               Grid.Row="1" Grid.ColumnSpan="2"/>
+    <TextBlock Text="{Binding ElementName=dumpPathTextBox, Path=(Validation.Errors)[0].ErrorContent}"
+               Visibility="{Binding ElementName=dumpPathTextBox, Path=(Validation.HasError), Converter={StaticResource cvtBoolToVisibility}}"
+               d:Visibility="Visible"
+               d:Text="有错误呐 qwq"
+               Foreground="Red"
+               Grid.Row="3" Grid.ColumnSpan="2"/>
+  </Grid>
+</Window>
