@@ -8,6 +8,7 @@
     <ResourceDictionary>
       <local:IsTypeConverter TargetType="{x:Type local:DialogPlotPageViewModel}" x:Key="cvtIsPlotPage"/>
       <local:DirtyToItalicConverter x:Key="cvtDirtyToItalic"/>
+      <local:PathFileNameConverter x:Key="cvtPathFileName" />
       <BooleanToVisibilityConverter x:Key="cvtBoolToVisibility"/>
     </ResourceDictionary>
   </Application.Resources>

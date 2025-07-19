@@ -32,10 +32,6 @@ public partial class DialogEditorWindow : Window,
     {
         base.OnClosed(e);
         App.Current.Messenger.UnregisterAll(this);
-        if (gotoWelcomeOnClosed)
-            App.Current.WelcomeWindow.Show();
-        else
-            App.Current.WelcomeWindow.Close();
     }
 
     protected override void OnClosing(CancelEventArgs e)
@@ -60,9 +56,11 @@ public partial class DialogEditorWindow : Window,
                 break;
             case MessageBoxResult.Cancel:
                 e.Cancel = true;
-                break;
+                return;
             }
         }
+        if (gotoWelcomeOnClosed)
+            App.Current.BackToWelcome();
     }
 
     void IRecipient<RequestNewPageMessage>.Receive(RequestNewPageMessage message)
@@ -79,7 +77,7 @@ public partial class DialogEditorWindow : Window,
     }
 
     bool IEditorDialogHost.RequestConfirm(string message, string title)
-        => MessageBox.Show(message, title, MessageBoxButton.YesNo, MessageBoxImage.Exclamation) == MessageBoxResult.Yes;
+        => MessageBox.Show(this, message, title, MessageBoxButton.YesNo, MessageBoxImage.Exclamation) == MessageBoxResult.Yes;
 
     Color? IEditorDialogHost.RequestColor()
     {
@@ -93,7 +91,7 @@ public partial class DialogEditorWindow : Window,
 
     void IEditorDialogHost.ShowErrorDialog(string message, string title)
     {
-        MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Error);
+        MessageBox.Show(this, message, title, MessageBoxButton.OK, MessageBoxImage.Error);
     }
 
     void IRecipient<RequestNewEntryMessage>.Receive(RequestNewEntryMessage message)

@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>0.0.1-alpha</Version>
+    <Version>$(VccVersion)</Version>
     <Copyright>Copyright © 2025 Saplonily. Licensed under the MIT License.</Copyright>
     <Description>Celeste Visual Cutscene Editor</Description>
     <AssemblyTitle>$(Description)</AssemblyTitle>

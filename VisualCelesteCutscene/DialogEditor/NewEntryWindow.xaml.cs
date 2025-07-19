@@ -18,7 +18,7 @@ public partial class NewEntryWindow : Window
     {
         if (!DialogHelper.IsValidDialogKey(textBoxName.Text))
         {
-            MessageBox.Show("项名称必须仅包含大小写字母，数字以及下划线。", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(this, "项名称必须仅包含大小写字母，数字以及下划线。", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
         IsPlotEntry = btnTrans.IsChecked is true;

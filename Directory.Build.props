@@ -10,4 +10,8 @@
     <DebugType>embedded</DebugType>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <VccVersion>0.0.1-alpha</VccVersion>
+  </PropertyGroup>
+
 </Project>

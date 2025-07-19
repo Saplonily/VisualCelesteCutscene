@@ -318,7 +318,7 @@ public sealed partial class DialogEditViewModel : ObservableObject
         => page is not null && page.Index != 0;
 
     private bool CanMoveDownPageExecute(DialogPageViewModel? page)
-        => page is not null && page.Index != SelectedPlotEntryEdit!.PagesViewModels.Count - 1;
+        => page is not null && SelectedPlotEntryEdit is not null && page.Index != SelectedPlotEntryEdit.PagesViewModels.Count - 1;
 
     private bool CanPreviewPageExecute(DialogPageViewModel? page)
         => page is DialogPlotPageViewModel plotPage && !plotPage.InlinedToPrevious;

@@ -5,7 +5,7 @@ namespace VisualCelesteCutscene;
 public partial class RenameWindow : Window
 {
     public string? RenameResult { get; private set; }
-    
+
     public RenameWindow(string original)
     {
         InitializeComponent();
@@ -17,7 +17,7 @@ public partial class RenameWindow : Window
     {
         if (!DialogHelper.IsValidDialogKey(textBox.Text))
         {
-            MessageBox.Show("项名称必须仅包含大小写字母，数字以及下划线。", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(this, "项名称必须仅包含大小写字母，数字以及下划线。", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
         RenameResult = textBox.Text;
