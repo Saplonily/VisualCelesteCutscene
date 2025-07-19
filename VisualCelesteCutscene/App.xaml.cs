@@ -84,7 +84,11 @@ public partial class App : Application
     [MemberNotNull(nameof(UserData))]
     public void LoadUserData()
     {
-        if (!File.Exists(SaveFile)) UserData = new UserData();
+        if (!File.Exists(SaveFile))
+        {
+            UserData = new UserData();
+            return;
+        }
         using (FileStream fs = new(SaveFile, FileMode.Open, FileAccess.Read))
         {
             UserData = JsonSerializer.Deserialize<UserData>(fs) ?? new();
